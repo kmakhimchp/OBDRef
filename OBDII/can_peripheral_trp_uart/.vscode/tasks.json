@@ -1,0 +1,13 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "MPLAB: Program Signed Image",
+      "type": "MPLAB-DebugAdapter",
+      "action": "program",
+      "device": "PIC32WM_BZ6204",
+      "tool": "Curiosity/Starter Kits (PKOB4)",
+      "image": "${workspaceFolder}/out/can_peripheral_trp_uart/default.signed.hex"
+    }
+  ]
+}

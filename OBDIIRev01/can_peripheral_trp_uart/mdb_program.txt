@@ -1,0 +1,8 @@
+set packslib.location C:/Users/I41802/.mchp_packs
+device PIC32WM_BZ6204
+set communication.interface swd
+set PowerOptions.VoltageLevel 3.3
+set programoptions.pgmspeed low
+hwtool pkob4
+program "D:/CAN BLE/OBDII/can_peripheral_trp_uart/out/can_peripheral_trp_uart/default.signed.hex"
+quit

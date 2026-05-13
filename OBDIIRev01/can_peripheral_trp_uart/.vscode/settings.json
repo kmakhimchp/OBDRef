@@ -1,0 +1,11 @@
+{
+    "mplab.clangd.compileCommandsDir": "${workspaceFolder}\\_build\\can_peripheral_trp_uart\\default",
+    "mplab.clangd.path": "c:\\Program Files\\Microchip\\xc32\\v5.10\\bin\\xc32-clangd.exe",
+    "memory-inspector.debugTypes": [
+        "arm-debugger",
+        "embedded-debug",
+        "gdb",
+        "mplab-core-da"
+    ],
+    "cmake.sourceDirectory": "D:/CAN BLE/OBDII/can_peripheral_trp_uart/cmake/can_peripheral_trp_uart/default"
+}

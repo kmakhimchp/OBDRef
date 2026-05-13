@@ -1,0 +1,11 @@
+# Build artifacts
+can_peripheral_trp_uart/_build/
+usart_ring_buffer_interrupt/_build/
+
+# IDE
+.vscode/.mplab/
+*.user
+
+# OS
+Thumbs.db
+.DS_Store

@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Workflow Status — OBDII_WBZ451</title>
+<style>
+:root {
+  --blue: #2980B9; --blue-light: #D6EAF8;
+  --green: #27AE60; --green-light: #D5F5E3;
+  --orange: #E67E22; --orange-light: #FDEBD0;
+  --gray: #95A5A6; --gray-light: #F2F3F4;
+  --dark: #2C3E50; --red: #E74C3C; --red-light: #FADBD8;
+  --purple: #8E44AD; --purple-light: #F5EEF8;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #F8F9FA; color: var(--dark); line-height: 1.5;
+  padding: 20px; max-width: 1100px; margin: 0 auto;
+}
+
+header {
+  background: linear-gradient(135deg, var(--dark), #34495E);
+  color: white; padding: 28px 32px; border-radius: 12px; margin-bottom: 20px;
+}
+header h1 { font-size: 1.7em; margin-bottom: 4px; }
+header .subtitle { opacity: 0.85; font-size: 0.92em; }
+header .prompt { opacity: 0.7; font-size: 0.82em; margin-top: 8px; font-style: italic; }
+
+.info-card {
+  background: white; border-radius: 10px; padding: 18px 22px;
+  margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px;
+}
+.info-item { }
+.info-item .label { font-size: 0.72em; font-weight: 600; color: var(--gray); text-transform: uppercase; letter-spacing: 0.4px; }
+.info-item .value { font-size: 0.92em; font-weight: 500; color: var(--dark); }
+
+.overall {
+  background: white; border-radius: 10px; padding: 18px 22px;
+  margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+.overall h2 { font-size: 1.1em; margin-bottom: 10px; }
+.stats-row { display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 12px; font-size: 0.88em; }
+.stat { display: flex; align-items: center; gap: 6px; }
+.stat-num { font-weight: 700; font-size: 1.3em; }
+.stat-label { color: var(--gray); }
+.bar-outer {
+  background: var(--gray-light); border-radius: 20px; height: 24px;
+  position: relative; overflow: hidden;
+}
+.bar-fill {
+  height: 100%; border-radius: 20px;
+  background: linear-gradient(90deg, var(--green), #2ECC71);
+}
+.bar-text {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%); font-weight: 600; font-size: 0.8em;
+}
+
+.section-title {
+  font-size: 1.1em; font-weight: 600; margin: 22px 0 10px;
+  padding-bottom: 5px; border-bottom: 2px solid var(--blue); display: inline-block;
+}
+.phase-card {
+  background: white; border-radius: 10px; padding: 18px 22px;
+  margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+.phase-card h3 { font-size: 1em; margin-bottom: 10px; }
+
+.step-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 7px 10px; border-radius: 6px; font-size: 0.84em;
+  border-bottom: 1px solid var(--gray-light);
+}
+.step-row:last-child { border-bottom: none; }
+.step-row.done { opacity: 0.55; }
+.step-row.current {
+  background: var(--blue-light); border-radius: 6px;
+  box-shadow: inset 3px 0 0 var(--blue); font-weight: 600;
+  opacity: 1;
+}
+.step-icon {
+  width: 18px; height: 18px; border-radius: 4px; border: 2px solid var(--gray);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; font-size: 0.7em;
+}
+.step-icon.done { background: var(--green); border-color: var(--green); color: white; font-weight: bold; }
+.step-icon.active { background: var(--blue); border-color: var(--blue); color: white; font-weight: bold; }
+.step-name { flex: 1; min-width: 0; }
+.tag {
+  font-size: 0.64em; font-weight: 600; padding: 2px 5px;
+  border-radius: 3px; white-space: nowrap;
+}
+.tag-auto { background: var(--blue-light); color: var(--blue); }
+.tag-manual { background: var(--orange-light); color: var(--orange); }
+
+.ms-card {
+  background: white; border-radius: 10px; padding: 20px 24px;
+  margin-bottom: 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  border-left: 5px solid var(--gray);
+}
+.ms-card.complete { border-left-color: var(--green); }
+.ms-card.active { border-left-color: var(--blue); }
+.ms-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 8px; flex-wrap: wrap; gap: 8px;
+}
+.ms-header h3 { font-size: 1.05em; }
+.badge {
+  font-size: 0.72em; font-weight: 600; padding: 3px 10px;
+  border-radius: 20px; text-transform: uppercase; letter-spacing: 0.4px;
+}
+.badge-complete { background: var(--green-light); color: var(--green); }
+.badge-progress { background: var(--blue-light); color: var(--blue); }
+.badge-pending { background: var(--gray-light); color: var(--gray); }
+
+.sub-phase-title {
+  font-size: 0.76em; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.5px; color: var(--gray); margin: 12px 0 4px;
+  padding-bottom: 2px; border-bottom: 1px dashed var(--gray-light);
+}
+
+.requirements { margin-bottom: 10px; font-size: 0.84em; }
+.requirements summary { cursor: pointer; color: var(--blue); font-weight: 500; }
+.requirements ul { margin: 4px 0 0 18px; }
+.requirements li { margin-bottom: 2px; }
+
+.no-milestones {
+  text-align: center; padding: 40px 20px; color: var(--gray);
+  font-size: 0.95em;
+}
+.no-milestones code { background: var(--gray-light); padding: 2px 8px; border-radius: 4px; }
+
+.legend {
+  background: white; border-radius: 10px; padding: 14px 18px;
+  margin-top: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  display: flex; flex-wrap: wrap; gap: 14px; font-size: 0.82em;
+}
+.legend-item { display: flex; align-items: center; gap: 5px; }
+.legend-swatch {
+  width: 14px; height: 14px; border-radius: 3px; border: 2px solid transparent;
+}
+.legend-swatch.done { background: var(--green); }
+.legend-swatch.active { background: var(--blue); }
+.legend-swatch.pending { border-color: var(--gray); background: white; }
+
+.timestamp { text-align: center; color: var(--gray); font-size: 0.78em; margin-top: 16px; }
+
+@media (max-width: 700px) {
+  body { padding: 10px; }
+  header { padding: 18px; }
+  .info-card { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>OBDII_WBZ451</h1>
+  <div class="subtitle">AI-Driven Engineering Workflow &mdash; Status Dashboard</div>
+  <div class='prompt'>&ldquo;Build an OBD-II diagnostic client application on the WBZ451 Curiosity board using CAN, with BLE transparent UART bridge for wireless diagnostic access. The application sends UDS requests (Read Data By&hellip;&rdquo;</div>
+</header>
+
+<div class="info-card">
+  <div class="info-item"><div class="label">Application Branch</div><div class="value"><code>**</code></div></div>
+  <div class="info-item"><div class="label">JIRA Epic</div><div class="value">PC-352</div></div>
+  <div class="info-item"><div class="label">Active Milestone</div><div class="value">**Milestone 3: BLE-CAN Diagnostic Bridge**</div></div>
+  <div class="info-item"><div class="label">Active JIRA ID</div><div class="value">—</div></div>
+</div>
+
+<div class="overall">
+  <h2>Overall Progress</h2>
+  <div class="stats-row">
+    <div class="stat"><span class="stat-num">10/11</span><span class="stat-label">Prerequisites</span></div>
+    <div class="stat"><span class="stat-num">15/16</span><span class="stat-label">Setup</span></div>
+    <div class="stat"><span class="stat-num">3/3</span><span class="stat-label">Milestones</span></div>
+  </div>
+  <div class="bar-outer"><div class="bar-fill" style="width:97%"></div>
+  <span class="bar-text">76/78 (97%)</span></div>
+</div>
+
+<div class="section-title">Prerequisites</div>
+<div class="phase-card" id="phase-prereqs"></div>
+
+<div class="section-title">Repository Setup</div>
+<div class="phase-card" id="phase-setup"></div>
+
+<div class="section-title">Milestones</div>
+<div id="phase-milestones"></div>
+
+<div class="legend">
+  <div class="legend-item"><span class="legend-swatch done"></span> Done</div>
+  <div class="legend-item"><span class="legend-swatch active"></span> Current</div>
+  <div class="legend-item"><span class="legend-swatch pending"></span> Pending</div>
+  <div class="legend-item"><span class="tag tag-auto">[AUTO]</span> AI-automated</div>
+  <div class="legend-item"><span class="tag tag-manual">[MANUAL]</span> Engineer action</div>
+</div>
+
+<p class="timestamp">Generated 2026-05-08 14:15:37 by generate_workflow.py &mdash; read-only status snapshot</p>
+
+<script>
+const MILESTONES_DATA = [
+  {
+    "number": 1,
+    "title": "CAN Transport & ISO-TP Layer",
+    "jira_id": "PC-353",
+    "requirements": [
+      {
+        "id": "R1",
+        "text": "Single Frame messages (<=7 bytes) are correctly formatted and transmitted on CAN ID 0x7E0"
+      },
+      {
+        "id": "R6",
+        "text": "Multi-frame messages are segmented into FF+CF and transmitted with correct sequence numbering"
+      },
+      {
+        "id": "R3",
+        "text": "Flow Control parameters from the receiver are respected (block size, separation time)"
+      },
+      {
+        "id": "R5",
+        "text": "Incoming multi-frame messages are reassembled and FC is sent back to the ECU"
+      },
+      {
+        "id": "R7",
+        "text": "Module listens on 0x7E8 and passes received frames to the reassembly logic"
+      },
+      {
+        "id": "R8",
+        "text": "Public API (`isotp_send`, `isotp_receive`, `isotp_poll`) is functional and callable from the app task"
+      },
+      {
+        "id": "R9",
+        "text": "CAN1 RX callbacks feed frames into the ISO-TP layer without blocking"
+      },
+      {
+        "id": "R10",
+        "text": "Timeout errors are reported when transfers exceed 1000ms"
+      }
+    ],
+    "status": "complete",
+    "sign_off": ""
+  },
+  {
+    "number": 2,
+    "title": "UDS Client Core",
+    "jira_id": "PC-354",
+    "requirements": [
+      {
+        "id": "R1",
+        "text": "State machine transitions correctly between IDLE -> SENDING -> AWAITING_RESPONSE -> IDLE (or ERROR)"
+      },
+      {
+        "id": "R2",
+        "text": "DiagSessionControl request is correctly formatted and session type is tracked"
+      },
+      {
+        "id": "R3",
+        "text": "TesterPresent keepalive works with and without suppress-positive-response"
+      },
+      {
+        "id": "R4",
+        "text": "ECU Reset requests are correctly formatted for all three sub-functions"
+      },
+      {
+        "id": "R5",
+        "text": "RDBI requests encode multiple DIDs and responses are correctly parsed"
+      },
+      {
+        "id": "R6",
+        "text": "Negative responses are decoded and the NRC value is reported"
+      },
+      {
+        "id": "R7",
+        "text": "P2 timeout triggers error state; NRC 0x78 extends wait to P2*"
+      },
+      {
+        "id": "R9",
+        "text": "OBD-II PID table contains at least 5 entries with correct DID mapping and scaling"
+      },
+      {
+        "id": "R10",
+        "text": "UART console accepts commands and displays human-readable diagnostic results"
+      }
+    ],
+    "status": "complete",
+    "sign_off": ""
+  },
+  {
+    "number": 3,
+    "title": "BLE-CAN Diagnostic Bridge",
+    "jira_id": "PC-355",
+    "requirements": [
+      {
+        "id": "R1",
+        "text": "BLE frames are correctly parsed into UDS service ID + data"
+      },
+      {
+        "id": "R2",
+        "text": "Parsed requests trigger UDS client operations over CAN"
+      },
+      {
+        "id": "R3",
+        "text": "ECU responses are packaged and sent back over BLE TRSPS"
+      },
+      {
+        "id": "R4",
+        "text": "Frame protocol is documented and correctly implemented (length prefix + service ID + data)"
+      },
+      {
+        "id": "R5",
+        "text": "BLE disconnect cancels pending transaction without crashing"
+      },
+      {
+        "id": "R6",
+        "text": "Simultaneous UART and BLE diagnostic requests are handled without data corruption"
+      },
+      {
+        "id": "R7",
+        "text": "Activity indication works (LED toggle or UART status print)"
+      },
+      {
+        "id": "R8",
+        "text": "Malformed frames return an error code to the BLE client"
+      }
+    ],
+    "status": "complete",
+    "sign_off": ""
+  }
+];
+const PROGRESS_DATA = {
+  "prereqs": {
+    "repo_exists": true,
+    "git_configured": true,
+    "bitbucket_access": true,
+    "jira_access": true,
+    "jira_recorded": true,
+    "jira_assignee": true,
+    "ai_tool": true,
+    "build_env": true,
+    "harmony_path": false,
+    "mcp_bitbucket": true,
+    "mcp_jira": true
+  },
+  "setup": {
+    "repo_cloned": true,
+    "default_branch": true,
+    "git_creds": true,
+    "harmony_identified": true,
+    "baseline_build": true,
+    "app_branch": false,
+    "owner_assigned": true,
+    "claude_md": true,
+    "jira_epic": true,
+    "milestones_md": true,
+    "code_review_checklist": true,
+    "workflow_dirs": true,
+    "module_dirs": true,
+    "readme": true,
+    "mcp_verified": true,
+    "workflow_html": true
+  },
+  "milestones": [
+    {
+      "number": 1,
+      "is_active": false,
+      "is_complete": true,
+      "prev_done": true,
+      "has_jira": true,
+      "signed_off": true,
+      "review_exists": true,
+      "test_exists": true
+    },
+    {
+      "number": 2,
+      "is_active": false,
+      "is_complete": true,
+      "prev_done": true,
+      "has_jira": true,
+      "signed_off": true,
+      "review_exists": true,
+      "test_exists": true
+    },
+    {
+      "number": 3,
+      "is_active": true,
+      "is_complete": true,
+      "prev_done": true,
+      "has_jira": true,
+      "signed_off": true,
+      "review_exists": true,
+      "test_exists": true
+    }
+  ]
+};
+
+function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+function renderStep(name, tag, isDone, isCurrent) {
+  const rowCls = isDone ? 'done' : isCurrent ? 'current' : '';
+  const iconCls = isDone ? 'done' : isCurrent ? 'active' : '';
+  const iconText = isDone ? '\u2713' : isCurrent ? '\u25B6' : '';
+  const tagCls = tag === 'MANUAL' ? 'tag-manual' : 'tag-auto';
+  return `<div class="step-row ${rowCls}"><span class="step-icon ${iconCls}">${iconText}</span><span class="step-name">${esc(name)}</span><span class="tag ${tagCls}">[${tag}]</span></div>`;
+}
+
+function findCurrentStep(steps) {
+  for (let i = 0; i < steps.length; i++) {
+    if (!steps[i][1]) return i;
+  }
+  return -1;
+}
+
+function renderPhase(containerId, title, steps) {
+  const container = document.getElementById(containerId);
+  const doneCount = steps.filter(s => s[1]).length;
+  const currentIdx = findCurrentStep(steps);
+  let html = `<h3>${title} (${doneCount}/${steps.length})</h3>`;
+  steps.forEach((s, i) => {
+    html += renderStep(s[0], s[2], s[1], i === currentIdx);
+  });
+  container.innerHTML = html;
+}
+
+function init() {
+  const pre = PROGRESS_DATA.prereqs || {};
+  const prereqSteps = [
+    ['Bitbucket repository exists', pre.repo_exists, 'AUTO'],
+    ['Git installed & configured', pre.git_configured, 'AUTO'],
+    ['Bitbucket access (read/write)', pre.bitbucket_access, 'AUTO'],
+    ['JIRA access', pre.jira_access, 'AUTO'],
+    ['JIRA project key & URL recorded', pre.jira_recorded, 'AUTO'],
+    ['JIRA assignee email recorded', pre.jira_assignee, 'AUTO'],
+    ['Harmony project location identified', pre.harmony_path, 'AUTO'],
+    ['AI tool access (Claude)', pre.ai_tool, 'AUTO'],
+    ['Build environment configured', pre.build_env, 'AUTO'],
+    ['Bitbucket MCP verified', pre.mcp_bitbucket, 'AUTO'],
+    ['JIRA MCP verified', pre.mcp_jira, 'AUTO'],
+  ];
+  renderPhase('phase-prereqs', 'Prerequisites', prereqSteps);
+
+  const s = PROGRESS_DATA.setup || {};
+  const setupSteps = [
+    ['Clone repository locally', s.repo_cloned, 'AUTO'],
+    ['Check out default branch', s.default_branch, 'AUTO'],
+    ['Git credentials verified', s.git_creds, 'AUTO'],
+    ['Identify target Harmony project', s.harmony_identified, 'AUTO'],
+    ['Verify baseline build', s.baseline_build, 'MANUAL'],
+    ['Create CLAUDE.md + MILESTONES.md + app branch', s.claude_md, 'AUTO'],
+    ['Application branch created', s.app_branch, 'AUTO'],
+    ['Repository owner assigned', s.owner_assigned, 'AUTO'],
+    ['CODE_REVIEW_CHECKLIST.md copied', s.code_review_checklist, 'AUTO'],
+    ['Workflow directories created', s.workflow_dirs, 'AUTO'],
+    ['Module directories with MODULE.md', s.module_dirs, 'AUTO'],
+    ['Project README.md updated', s.readme, 'AUTO'],
+    ['MCP verification run', s.mcp_verified, 'AUTO'],
+    ['Workflow.html generated', s.workflow_html, 'AUTO'],
+    ['JIRA Epic created and recorded', s.jira_epic, 'AUTO'],
+    ['Setup files committed', false, 'AUTO'],
+  ];
+  renderPhase('phase-setup', 'Repository Setup', setupSteps);
+
+  // Milestones
+  const msContainer = document.getElementById('phase-milestones');
+  if (!MILESTONES_DATA || MILESTONES_DATA.length === 0) {
+    msContainer.innerHTML = '<div class="no-milestones"><p>No milestones found.</p><p>Create <code>MILESTONES.md</code> then re-run <code>python generate_workflow.py</code>.</p></div>';
+    return;
+  }
+
+  let msHtml = '';
+  MILESTONES_DATA.forEach((ms, idx) => {
+    const prog = (PROGRESS_DATA.milestones || [])[idx] || {};
+    const isComplete = ms.status === 'complete';
+    const isActive = prog.is_active;
+    const cardCls = isComplete ? 'complete' : isActive ? 'active' : '';
+    const badgeCls = isComplete ? 'badge-complete' : isActive ? 'badge-progress' : 'badge-pending';
+    const badgeText = isComplete ? 'Complete' : isActive ? 'In Progress' : 'Not Started';
+
+    msHtml += `<div class="ms-card ${cardCls}">`;
+    msHtml += `<div class="ms-header"><h3>Milestone ${ms.number}: ${esc(ms.title)}${ms.jira_id ? ' &mdash; ' + esc(ms.jira_id) : ''}</h3>`;
+    msHtml += `<span class="badge ${badgeCls}">${badgeText}</span></div>`;
+
+    if (ms.requirements && ms.requirements.length > 0) {
+      msHtml += `<details class="requirements"><summary>Requirements (${ms.requirements.length})</summary><ul>`;
+      ms.requirements.forEach(r => { msHtml += `<li>${esc(r.id)}: ${esc(r.text)}</li>`; });
+      msHtml += `</ul></details>`;
+    }
+
+    const dorSteps = [
+      ['Previous milestone complete', ms.number === 1 || prog.prev_done, 'AUTO'],
+      ['Requirements written in MILESTONES.md', ms.requirements && ms.requirements.length > 0, 'MANUAL'],
+      ['JIRA ticket created & linked to epic', prog.has_jira, 'AUTO'],
+      ['Requirements signed off on JIRA', prog.signed_off, 'MANUAL'],
+      ['MODULE.md stubs exist & reviewed', prog.signed_off, 'MANUAL'],
+      ['AI context loaded (CLAUDE.md updated)', prog.signed_off, 'AUTO'],
+      ['JIRA ticket \u2192 In Progress', prog.is_active || prog.is_complete, 'AUTO'],
+    ];
+    const implSteps = [
+      ['Acceptance criteria verified', prog.review_exists, 'MANUAL'],
+      ['Implementation on application branch', prog.review_exists, 'AUTO'],
+      ['Build passed (zero errors/warnings)', prog.review_exists, 'AUTO'],
+      ['Code review checklist passed', prog.review_exists, 'AUTO'],
+      ['Documentation updated (MODULE.md + README)', prog.review_exists, 'AUTO'],
+      ['Code committed to application branch', prog.test_exists, 'AUTO'],
+    ];
+    const testSteps = [
+      ['Milestone testing (5 dimensions)', prog.test_exists, 'MANUAL'],
+      ['Test report committed', prog.test_exists, 'AUTO'],
+      ['JIRA \u2192 Done', prog.is_complete, 'AUTO'],
+      ['Workflow.html regenerated', prog.is_complete, 'AUTO'],
+    ];
+
+    function renderSubPhase(title, steps) {
+      const currentIdx = findCurrentStep(steps);
+      let h = `<div class="sub-phase-title">${title}</div>`;
+      steps.forEach((s, i) => { h += renderStep(s[0], s[2], s[1], i === currentIdx && isActive); });
+      return h;
+    }
+
+    msHtml += renderSubPhase('Definition of Ready', dorSteps);
+    msHtml += renderSubPhase('Implementation & Gates', implSteps);
+    msHtml += renderSubPhase('Testing & Completion', testSteps);
+    msHtml += `</div>`;
+  });
+  msContainer.innerHTML = msHtml;
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

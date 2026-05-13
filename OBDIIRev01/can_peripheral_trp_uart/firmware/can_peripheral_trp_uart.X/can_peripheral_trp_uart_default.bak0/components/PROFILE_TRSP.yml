@@ -1,0 +1,63 @@
+configVersion: 1.0.0
+componentName: PROFILE_TRSP
+coreVersion: 5.8.2
+device: PIC32WM_BZ6204
+library: []
+dependency:
+- dependencyPackage: class com.microchip.mcc.harmony.HarmonyModule
+  name: PROFILE_TRSP
+  type: module
+  version: ''
+- dependencyPackage: ''
+  name: wireless_ble
+  type: package
+  version: v1.5.0
+customDataClassName: com.microchip.utils_mh3.utils.persistence.CustomModuleData
+data:
+  attachments:
+    children:
+    - children:
+      - attributes:
+          id: BLE_TRS_Dependency
+        children:
+        - children:
+          - attributes:
+              id: targetComponentID
+            children:
+            - type: Value
+              value: SERVICE_TRS
+            type: String
+          - attributes:
+              id: targetAttachmentID
+            children:
+            - type: Value
+              value: BLE_TRS_Capability
+            type: String
+          type: Attributes
+        type: DirectDependency
+      type: Attachments
+    type: PROFILE_TRSP
+  elementPosition:
+    attributes:
+      id: __ROOTVIEW
+    children:
+    - children:
+      - attributes:
+          id: PROFILE_TRSP
+          x: '566'
+          y: '300'
+        type: ElementPosition
+      type: ElementPositions
+    type: ComponentGraph
+  symbols:
+    TRSP_BOOL_SERVER:
+      attributes:
+        id: TRSP_BOOL_SERVER
+      children:
+      - children:
+        - attributes:
+            value: 'true'
+          type: User
+        type: Values
+      type: Boolean
+  userData: {}

@@ -1,0 +1,14 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "MPLAB: Program Signed Image (No Debug)",
+      "type": "mplab-core-da",
+      "request": "launch",
+      "noDebug": true,
+      "device": "PIC32WM_BZ6204",
+      "tool": "Curiosity/Starter Kits (PKOB4)",
+      "program": "${workspaceFolder}/out/can_peripheral_trp_uart/default.signed.hex"
+    }
+  ]
+}

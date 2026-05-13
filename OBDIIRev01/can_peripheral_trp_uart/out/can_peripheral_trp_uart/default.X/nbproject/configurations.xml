@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor>
+  <confs>
+    <conf name="default">
+      <ScriptingSettings><ScriptingSetting key="configuration.header.auth" value="ECDSA p384+SHA384" /><ScriptingSetting key="configuration.header.fw_rev" value="1.0.0.0" /><ScriptingSetting key="configuration.header.sequence" value="0xFFFFFFFE" /><ScriptingSetting key="configuration.header.key_file" value="java_friendly_private_key_p384.pem" /><ScriptingSetting key="configuration.header.flash_type" value="eflash" /><ScriptingSetting key="configuration.header.ecdsa_mthd" value="Local Key" /></ScriptingSettings>
+      <compileType>
+        <loading>
+          <useAlternateLoadableFile>true</useAlternateLoadableFile>
+          <parseOnProdLoad>true</parseOnProdLoad>
+          <alternateLoadableFile>d:\CANOBD\OBDII\can_peripheral_trp_uart\out\can_peripheral_trp_uart\default.signed.hex</alternateLoadableFile>
+        </loading>
+      </compileType>
+    </conf>
+  </confs>
+</configurationDescriptor>

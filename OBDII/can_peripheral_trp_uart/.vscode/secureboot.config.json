@@ -1,0 +1,9 @@
+{
+  "configurationName": "default",
+  "configuration.header.flash_type": "eflash",
+  "configuration.header.auth": "ECDSA p384+SHA384",
+  "configuration.header.fw_rev": "1.0.0.0",
+  "configuration.header.sequence": "0xFFFFFFFE",
+  "configuration.header.ecdsa_mthd": "Local Key",
+  "configuration.header.key_file": "keys\\java_friendly_private_key_p384.pem"
+}

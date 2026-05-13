@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"mplab.clangd.compileCommandsDir": "${workspaceFolder}\\_build\\can_peripheral_trp_uart\\default",
+		"memory-inspector.debugTypes": [
+			"arm-debugger",
+			"embedded-debug",
+			"gdb",
+			"mplab-core-da"
+		],
+		"mplab.clangd.path": "c:\\Program Files\\Microchip\\xc32\\v5.10\\bin\\xc32-clangd.exe"
+	}
+}

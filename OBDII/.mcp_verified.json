@@ -1,0 +1,15 @@
+{
+  "bitbucket": {
+    "verified": true,
+    "timestamp": "2026-05-08T06:05:00Z",
+    "workspace": "~I41802",
+    "repository": "aiworkflow",
+    "operations_tested": ["list_branches", "list_directory_content", "get_file_content"]
+  },
+  "jira": {
+    "verified": true,
+    "timestamp": "2026-05-08T06:05:00Z",
+    "project_key": "PC",
+    "operations_tested": ["jira_create_issue", "jira_get_issue"]
+  }
+}
